@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[oc]
+*.egg-info
+dist/
+wheels/
+.venv
+
+# LaTeX intermediates
+build/.generated
+build/*.tex
+build/*.aux
+build/*.log
+build/*.out
+build/*.synctex.gz
+
+# Tool caches
+.ruff_cache/
+.rumdl_cache/
+fonts

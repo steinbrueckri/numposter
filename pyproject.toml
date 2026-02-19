@@ -1,0 +1,23 @@
+[project]
+name = "numposter"
+version = "0.1.0"
+description = "Typographic A3+ posters that visualise mathematical patterns as text-based halftone compositions"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-3.0-or-later"
+authors = [
+    { name = "Richard Steinbrueck", email = "me@steinbrueck.io" },
+]
+keywords = ["poster", "latex", "math", "typography", "number-theory"]
+dependencies = [
+    "pillow>=12.1.1",
+    "mpmath>=1.3",
+]
+
+[project.urls]
+Repository = "https://github.com/steinbrueckri/numposter"
+
+[dependency-groups]
+dev = [
+    "ruff",
+]

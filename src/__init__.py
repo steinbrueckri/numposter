@@ -1,0 +1,1 @@
+"""Numposter: typographic math posters."""
