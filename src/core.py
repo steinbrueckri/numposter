@@ -43,7 +43,7 @@ class ColorScheme:
 SCHEMES: dict[str, ColorScheme] = {
     "print": ColorScheme(
         preamble="",
-        min_pct=4,
+        min_pct=20,
         max_pct=100,
         color_template="black!{pct}",
     ),
