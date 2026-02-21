@@ -6,20 +6,20 @@ on:
   pull_request:
 
 jobs:
-  lint:
+  ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
-      - run: uv run ruff check src/
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          lfs: true
-      - uses: astral-sh/setup-uv@v4
-      - uses: extractions/setup-just@v2
-      - run: just fetch-font
-      - run: just build-docker
+      - name: Checkout 🔽
+        uses: actions/checkout@v4
+      - name: Setup UV 🔌
+        uses: astral-sh/setup-uv@v4
+      - name: Install Dependencies 📦
+        run: uv sync
+      - name: Setup Just 🔌
+        uses: extractions/setup-just@v2
+      - name: Lint 🤖
+        run: just ci
+      - name: Fetch Font 📄
+        run: just fetch-font
+      - name: Build Docker 🐳
+        run: just build-docker

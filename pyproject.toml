@@ -20,4 +20,5 @@ Repository = "https://github.com/steinbrueckri/numposter"
 [dependency-groups]
 dev = [
     "ruff",
+    "rumdl>=0.1.25",
 ]

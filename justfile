@@ -50,9 +50,8 @@ build-docker poster="all" scheme="all":
 
 # Run all tests but fail fast
 ci:
-    rumdl check README.md
+    uv run rumdl check README.md
     uv run ruff check src/
-    just build
 
 # Clean build artifacts
 clean:
