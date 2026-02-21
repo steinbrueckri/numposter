@@ -11,8 +11,9 @@ fetch-font:
 # Generate .tex files and compile to PDF
 # poster: 9|11|primes|collatz|pi|all
 # scheme: print|matrix|blueprint|ember|all
-build poster="all" scheme="all":
-    uv run python -m src.generate_poster {{ poster }} {{ scheme }}
+# paper: a3plus|a3|a4|all
+build poster="all" scheme="all" paper="all":
+    uv run python -m src.generate_poster {{ poster }} {{ scheme }} {{ paper }}
     while IFS= read -r f; do [ -n "$f" ] && xelatex -interaction=nonstopmode -output-directory=build "$f"; done < build/.generated
 
 # Build digit sum 9 poster
@@ -44,8 +45,9 @@ latex_image := "blang/latex:ctanfull"
 # Generate .tex files and compile to PDF inside a Docker container
 # poster: 9|11|primes|collatz|pi|all
 # scheme: print|matrix|blueprint|ember|all
-build-docker poster="all" scheme="all":
-    uv run python -m src.generate_poster {{ poster }} {{ scheme }}
+# paper: a3plus|a3|a4|all
+build-docker poster="all" scheme="all" paper="all":
+    uv run python -m src.generate_poster {{ poster }} {{ scheme }} {{ paper }}
     while IFS= read -r f; do [ -n "$f" ] && docker run --rm -v "$PWD:/src" -w /src {{ latex_image }} xelatex -interaction=nonstopmode -output-directory=build "$f"; done < build/.generated
 
 # Run all tests but fail fast

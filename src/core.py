@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Shared infrastructure for numposter: themes, page config, mask, LaTeX."""
+"""Shared infrastructure for numposter: themes, paper config, mask, LaTeX."""
 
 from __future__ import annotations
 
@@ -13,18 +13,6 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 # =========================
 # Configuration
 # =========================
-@dataclass(frozen=True)
-class PageConfig:
-    width_mm: int = 329
-    height_mm: int = 483
-    margin_mm: int = 0
-    grid_cols: int = 259
-    grid_rows: int = 195
-    font_size_pt: float = 6.0
-    line_height_pt: float = 7.0
-    char_width_pt: float = 3.6
-
-
 @dataclass(frozen=True)
 class ColorScheme:
     """All color logic lives here — no branching elsewhere."""
@@ -87,10 +75,48 @@ SCHEMES: dict[str, ColorScheme] = {
 
 
 @dataclass(frozen=True)
+class PaperConfig:
+    width_mm: int = 329
+    height_mm: int = 483
+    margin_mm: int = 0
+    grid_cols: int = 259
+    grid_rows: int = 195
+    font_size_pt: float = 6.0
+    line_height_pt: float = 7.0
+    char_width_pt: float = 3.6
+
+
+BASE_PAPER = PaperConfig()
+
+
+def scaled_paper(
+    *, width_mm: int, height_mm: int, base: PaperConfig = BASE_PAPER
+) -> PaperConfig:
+    """Scale grid dimensions from the base paper to keep glyph density stable."""
+    return PaperConfig(
+        width_mm=width_mm,
+        height_mm=height_mm,
+        margin_mm=base.margin_mm,
+        grid_cols=max(1, round(base.grid_cols * width_mm / base.width_mm)),
+        grid_rows=max(1, round(base.grid_rows * height_mm / base.height_mm)),
+        font_size_pt=base.font_size_pt,
+        line_height_pt=base.line_height_pt,
+        char_width_pt=base.char_width_pt,
+    )
+
+
+PAPER_FORMATS: dict[str, PaperConfig] = {
+    "a3plus": BASE_PAPER,
+    "a3": scaled_paper(width_mm=297, height_mm=420),
+    "a4": scaled_paper(width_mm=210, height_mm=297),
+}
+
+
+@dataclass(frozen=True)
 class PosterConfig:
     """Base config for any poster. Poster-specific params passed via overrides."""
 
-    page: PageConfig = PageConfig()
+    paper: PaperConfig = PaperConfig()
     scheme: ColorScheme = SCHEMES["print"]
     seed: int = 9
     edge_soften: float = 1.2
@@ -121,12 +147,12 @@ def load_font(size_px: int) -> ImageFont.FreeTypeFont:
 # =========================
 def _render_char_mask(cfg: PosterConfig) -> Image.Image:
     """Render a single-character glyph as grayscale mask."""
-    page = cfg.page
+    paper = cfg.paper
     scale = cfg.mask_render_scale
 
-    h_px = page.grid_rows * scale
-    aspect = page.char_width_pt / page.line_height_pt
-    w_px = round(page.grid_cols * scale * aspect)
+    h_px = paper.grid_rows * scale
+    aspect = paper.char_width_pt / paper.line_height_pt
+    w_px = round(paper.grid_cols * scale * aspect)
 
     img = Image.new("L", (w_px, h_px), 0)
     draw = ImageDraw.Draw(img)
@@ -159,11 +185,11 @@ def _render_image_mask(cfg: PosterConfig) -> Image.Image:
     """
     from PIL import ImageOps
 
-    page = cfg.page
+    paper = cfg.paper
     scale = cfg.mask_render_scale
-    h_px = page.grid_rows * scale
-    aspect = page.char_width_pt / page.line_height_pt
-    w_px = round(page.grid_cols * scale * aspect)
+    h_px = paper.grid_rows * scale
+    aspect = paper.char_width_pt / paper.line_height_pt
+    w_px = round(paper.grid_cols * scale * aspect)
 
     src = Image.open(cfg.mask_image).convert("L")
 
@@ -194,7 +220,7 @@ def render_mask(cfg: PosterConfig) -> Image.Image:
     else:
         raise ValueError("PosterConfig needs either mask_char or mask_image")
     return raw.resize(
-        (cfg.page.grid_cols, cfg.page.grid_rows), Image.Resampling.LANCZOS
+        (cfg.paper.grid_cols, cfg.paper.grid_rows), Image.Resampling.LANCZOS
     )
 
 
@@ -270,11 +296,11 @@ def build_latex(lines: list[str], mask: Image.Image, cfg: PosterConfig) -> str:
         preamble = "\n" + preamble
 
     return _LATEX_TEMPLATE.format(
-        width_mm=cfg.page.width_mm,
-        height_mm=cfg.page.height_mm,
-        margin_mm=cfg.page.margin_mm,
+        width_mm=cfg.paper.width_mm,
+        height_mm=cfg.paper.height_mm,
+        margin_mm=cfg.paper.margin_mm,
         color_preamble=preamble,
-        font_size_pt=cfg.page.font_size_pt,
-        line_height_pt=cfg.page.line_height_pt,
+        font_size_pt=cfg.paper.font_size_pt,
+        line_height_pt=cfg.paper.line_height_pt,
         body="\n".join(body_lines),
     )

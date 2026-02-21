@@ -1,7 +1,6 @@
 # numposter
 
-Typographic **A3+ (329 x 483 mm)** posters that visualise mathematical
-patterns and number-theoretic phenomena as text-based halftone compositions.
+Typographic posters in various sizes that visualize mathematical patterns and number-theoretic phenomena as text-based halftone compositions.
 
 Python + Pillow generate a grayscale mask from the poster's symbol, then
 fill a grid of monospaced text whose per-character shade follows the mask.
@@ -60,10 +59,10 @@ it cannot be the root of any polynomial with rational coefficients.
 
 ## Output
 
-- Format: **A3+ (329 x 483 mm)**
+- Formats: **A3+ (329 x 483 mm)**, **A3 (297 x 420 mm)**, **A4 (210 x 297 mm)**
 - Font: **Fira Mono** (Mozilla, OFL-licensed) via XeLaTeX + fontspec
 - Color schemes: `print`, `matrix`, `blueprint`, `ember`
-- Export: `build/{poster}_{scheme}.pdf`
+- Export: `build/{poster}_{scheme}_{paper}.pdf` (`paper`: `a3plus|a3|a4`)
 
 ## Requirements
 
@@ -77,7 +76,7 @@ it cannot be the root of any polynomial with rational coefficients.
 ```bash
 just fetch-font              # download Fira Mono (one-time)
 just build                   # build all posters & schemes (local XeLaTeX)
-just build primes ember      # build primes poster, ember scheme
+just build primes ember a4   # build primes poster, ember scheme, A4
 just build-docker            # build all posters using Docker (no local LaTeX needed)
 ```
 
