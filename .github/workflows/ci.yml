@@ -16,7 +16,7 @@ jobs:
       - name: Install Dependencies 📦
         run: uv sync
       - name: Setup Just 🔌
-        uses: extractions/setup-just@v2
+        uses: extractions/setup-just@v3
       - name: Lint 🤖
         run: just ci
       - name: Fetch Font 📄
